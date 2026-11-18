@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contoso Member Services (fictional)</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">◆</span>
+      <div>
+        <h1>Contoso Member Services</h1>
+        <p class="subtitle">Fictional pension fund · synthetic data only · not real pension rules</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" class="tab active" data-view="members" aria-selected="true">Members</button>
+      <button role="tab" class="tab" data-view="requests" aria-selected="false">Service requests</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="view-members" class="view">
+      <div class="layout">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Members</h2>
+            <label>Status
+              <select id="status-filter">
+                <option value="">All</option>
+                <option value="active">Active</option>
+                <option value="deferred">Deferred</option>
+                <option value="retired">Retired</option>
+              </select>
+            </label>
+          </div>
+          <table class="grid" id="members-table">
+            <thead><tr><th>ID</th><th>Name</th><th>Employer</th><th>Part-time</th><th>Status</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="panel" id="member-detail" hidden>
+          <h2 id="detail-title">Member</h2>
+          <div class="cards" id="statement-cards"></div>
+
+          <h3>Retirement projection</h3>
+          <form id="projection-form" class="inline-form">
+            <label>Retirement age
+              <select id="retirement-age"></select>
+            </label>
+            <label>Salary growth / year
+              <select id="salary-growth">
+                <option value="0">0%</option>
+                <option value="0.01">1%</option>
+                <option value="0.02">2%</option>
+              </select>
+            </label>
+            <button type="submit">Project</button>
+          </form>
+          <div id="projection-result" class="result" aria-live="polite"></div>
+
+          <h3>Contribution history</h3>
+          <table class="grid" id="contributions-table">
+            <thead><tr><th>Year</th><th>Full-time salary</th><th>Part-time</th><th>Pensionable</th><th>Accrual</th><th>Employer</th><th>Employee</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-requests" class="view" hidden>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Service requests</h2>
+          <label>Status
+            <select id="request-status-filter">
+              <option value="">All</option>
+              <option value="open">Open</option>
+              <option value="in-progress">In progress</option>
+              <option value="closed">Closed</option>
+            </select>
+          </label>
+        </div>
+        <table class="grid" id="requests-table">
+          <thead><tr><th>ID</th><th>Member</th><th>Category</th><th>Subject</th><th>Status</th><th>Created</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>Contoso Pension Platform · GitHub Copilot Advanced Workshop · <a href="/openapi.yaml">OpenAPI</a> · <a href="/api/health">Health</a></footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

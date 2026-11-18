@@ -1,0 +1,15 @@
+name: Bug
+description: Something is calculated or shown incorrectly
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes: { label: What happens, description: Include the request and the actual response }
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: Expected (with the rule from docs/domain) }
+    validations: { required: true }
+  - type: input
+    id: member
+    attributes: { label: Synthetic member id, placeholder: M-1003 }

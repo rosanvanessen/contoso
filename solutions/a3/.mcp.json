@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "microsoftLearn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "tools": ["*"]
+    },
+    "pensionRules": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["mcp/pension-rules/server.ts"],
+      "env": {
+        "PENSION_RULES_AUDIT_LOG": "mcp/pension-rules/logs/audit.jsonl"
+      },
+      "tools": [
+        "get_scheme_parameters",
+        "explain_rule",
+        "calculate_projection",
+        "search_service_requests"
+      ]
+    }
+  }
+}

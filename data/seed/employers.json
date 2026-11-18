@@ -1,0 +1,5 @@
+[
+  { "id": "E-100", "name": "Noordlicht Logistics (fictional)", "sector": "logistics", "city": "Groningen" },
+  { "id": "E-200", "name": "De Linde Engineering (fictional)", "sector": "engineering", "city": "Utrecht" },
+  { "id": "E-300", "name": "Rivierenland Retail (fictional)", "sector": "retail", "city": "Nijmegen" }
+]

@@ -1,0 +1,13 @@
+node_modules/
+*.db
+.env
+.env.*
+!.env.example
+.github/hooks/logs/
+mcp/**/logs/
+copilot-session-*.md
+.DS_Store
+
+# Private lists that must never be published
+.public-scan-terms
+*.local.md

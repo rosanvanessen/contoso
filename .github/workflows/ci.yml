@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Engineering control: least-privilege token. Nothing in CI can write to the repo.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Production tip: pin actions to a full commit SHA instead of a tag.
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Public-safety scan (secrets, internal links, e-mail addresses)
+        run: node scripts/check-public-safety.mjs
+      - name: Unit and API tests
+        run: npm test
+      - name: Smoke test the running app
+        run: |
+          node api/src/server.ts & 
+          for i in $(seq 1 20); do curl -fs http://localhost:3000/api/health && break; sleep 0.5; done
+          curl -fs http://localhost:3000/api/members/M-1001/statement > /dev/null

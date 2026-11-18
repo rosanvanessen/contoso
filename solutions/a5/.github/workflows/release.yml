@@ -1,0 +1,116 @@
+# Release pipeline: build ONCE → attest provenance → promote the SAME digest through environments.
+# Deployment target is out of scope for the workshop; see infra/main.bicep for Azure Container Apps.
+# Production tip: pin every action to a full commit SHA instead of a tag.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+# Default-deny: every job asks for exactly the permissions it needs.
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build, push & attest image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read      # checkout
+      packages: write     # push to ghcr.io
+      id-token: write     # OIDC token to sign the attestation (Sigstore)
+      attestations: write # store the attestation
+    outputs:
+      image: ${{ steps.image.outputs.name }}
+      digest: ${{ steps.push.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Test before we build
+        run: npm test
+
+      # GHCR image names must be lower-case, but owner/repo may contain capitals.
+      - name: Compute lower-case image name
+        id: image
+        run: echo "name=ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Image tags and labels
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=sha,format=long
+
+      - name: Build and push
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Attest build provenance
+        uses: actions/attest@v4
+        with:
+          subject-name: ${{ steps.image.outputs.name }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+
+      - name: Summary
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          echo "### 📦 Built once" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`${IMAGE}@${DIGEST}\`" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-staging:
+    name: Deploy to staging (human gate)
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Add a Required reviewer to this environment: Settings → Environments → staging.
+    environment: staging
+    permissions:
+      contents: read
+      packages: read      # pull the image manifest for verification
+      attestations: read  # read the provenance attestation
+    env:
+      IMAGE: ${{ needs.build.outputs.image }}
+      DIGEST: ${{ needs.build.outputs.digest }}
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify provenance BEFORE deploying
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh attestation verify "oci://${IMAGE}@${DIGEST}" --repo "$GITHUB_REPOSITORY"
+
+      - name: Deploy (simulated)
+        run: |
+          echo "Deploying ${IMAGE}@${DIGEST} to staging"
+          echo "Deployment target is out of scope; see infra/main.bicep for Azure Container Apps"
+          echo "### 🚀 Promoted to staging: \`${IMAGE}@${DIGEST}\`" >> "$GITHUB_STEP_SUMMARY"

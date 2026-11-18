@@ -1,0 +1,24 @@
+# Prepares the environment of the Copilot cloud agent before it starts working on an issue.
+# Rules: must live on the default branch, contain ONE job named `copilot-setup-steps`, timeout ≤ 59 minutes.
+name: Copilot setup steps
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [.github/workflows/copilot-setup-steps.yml]
+  pull_request:
+    paths: [.github/workflows/copilot-setup-steps.yml]
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Verify the project builds and tests pass before the agent starts
+        run: npm test

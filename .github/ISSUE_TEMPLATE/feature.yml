@@ -1,0 +1,21 @@
+name: Feature
+description: A new capability for the Contoso platform
+labels: [feature]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      placeholder: As a <role> I want <capability> so that <benefit>
+    validations: { required: true }
+  - type: textarea
+    id: rules
+    attributes:
+      label: Business rules
+      description: Reference docs/domain/*.md where possible.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria (testable)
+      placeholder: "- Given … when … then …"
+    validations: { required: true }

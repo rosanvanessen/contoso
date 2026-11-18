@@ -1,0 +1,22 @@
+{
+  "name": "contoso-pension-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Contoso Pension Platform — fictional pension member-services app used in the GitHub Copilot Advanced workshop",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node api/src/server.ts",
+    "dev": "node --watch api/src/server.ts",
+    "test": "node --test \"api/test/**/*.test.ts\" \"mcp/**/test/*.test.ts\"",
+    "test:api": "node --test \"api/test/**/*.test.ts\"",
+    "test:mcp": "node --test \"mcp/**/test/*.test.ts\"",
+    "mcp:pension-rules": "node mcp/pension-rules/server.ts",
+    "verify": "node scripts/verify-env.mjs",
+    "catch-up": "node scripts/catch-up.mjs",
+    "audit": "node scripts/audit-report.mjs",
+    "check:public": "node scripts/check-public-safety.mjs"
+  }
+}

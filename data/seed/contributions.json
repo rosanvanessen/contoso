@@ -1,0 +1,14 @@
+{
+  "_comment": "Salary history per member per year (full-time salary + part-time factor). Pensionable salary, accrual and contributions are computed by the domain module at seed time.",
+  "history": [
+    { "memberId": "M-1001", "fromYear": 2016, "toYear": 2025, "fullTimeSalary": 47000, "partTimeFactor": 1.0 },
+    { "memberId": "M-1002", "fromYear": 2018, "toYear": 2025, "fullTimeSalary": 38000, "partTimeFactor": 1.0 },
+    { "memberId": "M-1003", "fromYear": 2017, "toYear": 2021, "fullTimeSalary": 42000, "partTimeFactor": 0.8 },
+    { "memberId": "M-1003", "fromYear": 2022, "toYear": 2025, "fullTimeSalary": 45000, "partTimeFactor": 0.6 },
+    { "memberId": "M-1004", "fromYear": 2016, "toYear": 2025, "fullTimeSalary": 92000, "partTimeFactor": 0.8 },
+    { "memberId": "M-1005", "fromYear": 2021, "toYear": 2025, "fullTimeSalary": 34000, "partTimeFactor": 0.5 },
+    { "memberId": "M-1006", "fromYear": 2016, "toYear": 2023, "fullTimeSalary": 37000, "partTimeFactor": 1.0 },
+    { "memberId": "M-1007", "fromYear": 2019, "toYear": 2025, "fullTimeSalary": 140000, "partTimeFactor": 1.0 },
+    { "memberId": "M-1008", "fromYear": 2024, "toYear": 2025, "fullTimeSalary": 15500, "partTimeFactor": 0.9 }
+  ]
+}

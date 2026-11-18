@@ -1,0 +1,10 @@
+[
+  { "id": "M-1001", "firstName": "Anouk",  "lastName": "Visser (synthetic)",   "birthDate": "1972-04-15", "employerId": "E-200", "startDate": "2016-01-01", "fullTimeSalary": 52000, "partTimeFactor": 1.0, "status": "active" },
+  { "id": "M-1002", "firstName": "Daan",   "lastName": "de Boer (synthetic)",  "birthDate": "1985-09-02", "employerId": "E-100", "startDate": "2018-01-01", "fullTimeSalary": 41000, "partTimeFactor": 1.0, "status": "active" },
+  { "id": "M-1003", "firstName": "Fatima", "lastName": "El Amrani (synthetic)", "birthDate": "1979-12-20", "employerId": "E-300", "startDate": "2017-01-01", "fullTimeSalary": 46000, "partTimeFactor": 0.6, "status": "active" },
+  { "id": "M-1004", "firstName": "Jeroen", "lastName": "Bakker (synthetic)",   "birthDate": "1966-06-30", "employerId": "E-200", "startDate": "2016-01-01", "fullTimeSalary": 98000, "partTimeFactor": 0.8, "status": "active" },
+  { "id": "M-1005", "firstName": "Lotte",  "lastName": "Jansen (synthetic)",   "birthDate": "1995-02-11", "employerId": "E-100", "startDate": "2021-01-01", "fullTimeSalary": 36500, "partTimeFactor": 0.5, "status": "active" },
+  { "id": "M-1006", "firstName": "Sem",    "lastName": "Mulder (synthetic)",   "birthDate": "1959-11-05", "employerId": "E-300", "startDate": "2016-01-01", "fullTimeSalary": 39000, "partTimeFactor": 1.0, "status": "deferred" },
+  { "id": "M-1007", "firstName": "Noor",   "lastName": "Smit (synthetic)",     "birthDate": "1988-07-23", "employerId": "E-200", "startDate": "2019-01-01", "fullTimeSalary": 150000, "partTimeFactor": 1.0, "status": "active" },
+  { "id": "M-1008", "firstName": "Thijs",  "lastName": "Meijer (synthetic)",   "birthDate": "2001-03-08", "employerId": "E-100", "startDate": "2024-01-01", "fullTimeSalary": 16000, "partTimeFactor": 0.9, "status": "active" }
+]

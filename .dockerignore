@@ -1,0 +1,9 @@
+.git
+.github
+.devcontainer
+labs
+solutions
+docs
+mcp
+infra
+node_modules

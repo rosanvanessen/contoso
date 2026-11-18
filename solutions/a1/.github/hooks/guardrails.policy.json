@@ -1,0 +1,12 @@
+{
+  "_comment": "Engineering controls for agent tool calls. Read by guardrails.mjs. Changing this file requires a reviewed PR (see CODEOWNERS).",
+  "blockedTools": ["delete_member_data"],
+  "protectedPaths": [".github/hooks/", "infra/", "data/seed/", ".env"],
+  "blockedCommands": [
+    { "pattern": "rm\\s+-rf\\s+(/|~|\\*)", "reason": "Recursive delete of root/home/wildcard is not allowed" },
+    { "pattern": "git\\s+push\\s+.*(--force|-f)\\b", "reason": "Force-push is not allowed; open a pull request" },
+    { "pattern": "curl[^|]*\\|\\s*(ba|z)?sh", "reason": "Piping downloads into a shell is not allowed" },
+    { "pattern": "\\bsudo\\b", "reason": "Privilege escalation is not allowed" }
+  ],
+  "writeToolPattern": "(edit|write|create|replace|patch|delete|move|rename)"
+}

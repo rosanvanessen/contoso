@@ -1,0 +1,215 @@
+openapi: 3.1.0
+info:
+  title: Contoso Pension Platform API
+  version: 1.0.0
+  description: >
+    Fictional pension member-services API used in the GitHub Copilot Advanced workshop.
+    Synthetic data only. Scheme rules are simplified and NOT real pension rules.
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: health
+  - name: members
+  - name: employers
+  - name: projections
+  - name: service-requests
+paths:
+  /api/health:
+    get:
+      tags: [health]
+      summary: Liveness check
+      responses:
+        '200': { description: Service is up }
+  /api/members:
+    get:
+      tags: [members]
+      summary: List members
+      parameters:
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/MemberStatus' } }
+        - { name: employerId, in: query, schema: { type: string, example: E-200 } }
+      responses:
+        '200':
+          description: Members
+          content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Member' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /api/members/{id}:
+    get:
+      tags: [members]
+      summary: Get a member
+      parameters: [ { $ref: '#/components/parameters/MemberId' } ]
+      responses:
+        '200': { description: Member, content: { application/json: { schema: { $ref: '#/components/schemas/Member' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/members/{id}/contributions:
+    get:
+      tags: [members]
+      summary: Yearly contribution and accrual history
+      parameters: [ { $ref: '#/components/parameters/MemberId' } ]
+      responses:
+        '200': { description: History, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Contribution' } } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/members/{id}/statement:
+    get:
+      tags: [members]
+      summary: Annual pension statement
+      parameters:
+        - { $ref: '#/components/parameters/MemberId' }
+        - { name: asOf, in: query, schema: { type: string, format: date } }
+      responses:
+        '200': { description: Statement, content: { application/json: { schema: { $ref: '#/components/schemas/Statement' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/employers:
+    get:
+      tags: [employers]
+      summary: List employers
+      responses:
+        '200': { description: Employers, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Employer' } } } } }
+  /api/employers/{id}:
+    get:
+      tags: [employers]
+      summary: Get an employer with its member count
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, example: E-200 } } ]
+      responses:
+        '200': { description: Employer }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/projections:
+    post:
+      tags: [projections]
+      summary: Project the yearly pension at retirement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [memberId]
+              properties:
+                memberId: { type: string, example: M-1001 }
+                retirementAge: { type: integer, minimum: 60, maximum: 68, example: 63, description: 'Retirement age (rule R5). Below 68 applies the early-retirement reduction.' }
+                salaryGrowthRate: { type: number, minimum: 0, maximum: 0.1, example: 0.02 }
+      responses:
+        '200': { description: Projection, content: { application/json: { schema: { $ref: '#/components/schemas/Projection' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/service-requests:
+    get:
+      tags: [service-requests]
+      summary: List service requests
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [open, in-progress, closed] } }
+        - { name: memberId, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Requests, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/ServiceRequest' } } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+    post:
+      tags: [service-requests]
+      summary: Create a service request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [memberId, category, subject, description]
+              properties:
+                memberId: { type: string }
+                category: { type: string, enum: [address-change, value-transfer, retirement-quote, complaint] }
+                subject: { type: string, minLength: 3, maxLength: 120 }
+                description: { type: string, maxLength: 2000 }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ServiceRequest' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/service-requests/{id}:
+    get:
+      tags: [service-requests]
+      summary: Get a service request
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, example: SR-5001 } } ]
+      responses:
+        '200': { description: Request, content: { application/json: { schema: { $ref: '#/components/schemas/ServiceRequest' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+components:
+  parameters:
+    MemberId: { name: id, in: path, required: true, schema: { type: string, example: M-1001 } }
+  responses:
+    BadRequest: { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    NotFound: { description: Not found, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Unprocessable: { description: Valid input that breaks a business rule, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string, enum: [BAD_REQUEST, NOT_FOUND, METHOD_NOT_ALLOWED, UNPROCESSABLE, INTERNAL] }
+            message: { type: string }
+            details: { type: array, items: { type: string } }
+    MemberStatus: { type: string, enum: [active, deferred, retired] }
+    Member:
+      type: object
+      properties:
+        id: { type: string }
+        firstName: { type: string }
+        lastName: { type: string }
+        birthDate: { type: string, format: date }
+        employerId: { type: string }
+        startDate: { type: string, format: date }
+        fullTimeSalary: { type: number }
+        partTimeFactor: { type: number, exclusiveMinimum: 0, maximum: 1 }
+        status: { $ref: '#/components/schemas/MemberStatus' }
+    Employer:
+      type: object
+      properties: { id: { type: string }, name: { type: string }, sector: { type: string }, city: { type: string } }
+    Contribution:
+      type: object
+      properties:
+        memberId: { type: string }
+        year: { type: integer }
+        fullTimeSalary: { type: number }
+        partTimeFactor: { type: number }
+        pensionableSalary: { type: number }
+        accrual: { type: number }
+        employerContribution: { type: number }
+        employeeContribution: { type: number }
+    Statement:
+      type: object
+      properties:
+        memberId: { type: string }
+        asOf: { type: string, format: date }
+        age: { type: integer }
+        yearsOfService: { type: integer }
+        accruedPension: { type: number }
+        currentPensionableSalary: { type: number }
+        currentYearAccrual: { type: number }
+        projectedPensionAtRetirement: { type: number }
+        retirementDate: { type: string, format: date }
+        scheme: { type: string }
+    Projection:
+      type: object
+      properties:
+        memberId: { type: string }
+        retirementAge: { type: integer }
+        retirementDate: { type: string, format: date }
+        yearsToRetirement: { type: integer }
+        accruedToDate: { type: number }
+        futureAccrual: { type: number }
+        earlyRetirementReduction: { type: number, description: 'Fraction, e.g. 0.325 for retiring at 63' }
+        unreducedAnnualPension: { type: number }
+        projectedAnnualPension: { type: number, description: 'After the early-retirement reduction' }
+        scheme: { type: string }
+    ServiceRequest:
+      type: object
+      properties:
+        id: { type: string }
+        memberId: { type: string }
+        category: { type: string, enum: [address-change, value-transfer, retirement-quote, complaint] }
+        subject: { type: string }
+        description: { type: string }
+        status: { type: string, enum: [open, in-progress, closed] }
+        createdAt: { type: string, format: date }
+        closedAt: { type: [string, 'null'], format: date }
