@@ -124,6 +124,8 @@ Do not change any files. Do not run any commands.
 ```
 
 4. Note how long the answer took (fast / ok / slow).
+Claude Haiku - 21s
+
 
 ### 2b · Same question for model B
 
@@ -132,6 +134,8 @@ Do not change any files. Do not run any commands.
 3. Paste the **same** prompt.
 
 > 👀 **Expected:** two tables of 5 rows each. They will differ in which edge cases they pick (franchise, cap, part-time, invalid factor…) and possibly in the expected values.
+
+GPT-6.1 Sol 20s
 
 ### 2c · Verify deterministically
 
